@@ -5,7 +5,8 @@ import { ResetPasswordPage } from './components/auth/ResetPasswordPage';
 import MainApp from './components/MainApp';
 
 const AppContent: React.FC = () => {
-  const { user, loading } = useAuth();
+  // Temporarily bypass authentication to test if app loads
+  // const { user, loading } = useAuth();
   const [isResetPassword, setIsResetPassword] = useState(false);
 
   useEffect(() => {
@@ -16,25 +17,26 @@ const AppContent: React.FC = () => {
     }
   }, []);
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-16 h-16 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading...</p>
-        </div>
-      </div>
-    );
-  }
+  // Temporarily bypass loading and authentication
+  // if (loading) {
+  //   return (
+  //     <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+  //       <div className="text-center">
+  //         <div className="w-16 h-16 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+  //         <p className="text-gray-600">Loading...</p>
+  //       </div>
+  //     );
+  // }
 
   // Show reset password page if recovery token exists
   if (isResetPassword) {
     return <ResetPasswordPage />;
   }
 
-  if (!user) {
-    return <LoginPage />;
-  }
+  // Temporarily bypass user check
+  // if (!user) {
+  //   return <LoginPage />;
+  // }
 
   return <MainApp />;
 };
