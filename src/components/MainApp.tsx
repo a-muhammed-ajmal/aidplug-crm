@@ -159,6 +159,58 @@ const MainApp: React.FC = () => {
     </div>
   );
 
+  const renderLeads = () => (
+    <div className="text-center py-12">
+      <Users className="w-16 h-16 mx-auto text-gray-300 mb-4" />
+      <h2 className="text-xl font-semibold text-gray-900 mb-2">Leads Management</h2>
+      <p className="text-gray-600">Manage your leads and prospects here.</p>
+      <p className="text-sm text-gray-500 mt-2">Total leads: {leads.length}</p>
+    </div>
+  );
+
+  const renderClients = () => (
+    <div className="text-center py-12">
+      <User className="w-16 h-16 mx-auto text-gray-300 mb-4" />
+      <h2 className="text-xl font-semibold text-gray-900 mb-2">Client Management</h2>
+      <p className="text-gray-600">Manage your client relationships here.</p>
+      <p className="text-sm text-gray-500 mt-2">Total clients: {clients.length}</p>
+    </div>
+  );
+
+  const renderDeals = () => (
+    <div className="text-center py-12">
+      <Briefcase className="w-16 h-16 mx-auto text-gray-300 mb-4" />
+      <h2 className="text-xl font-semibold text-gray-900 mb-2">Deal Pipeline</h2>
+      <p className="text-gray-600">Track and manage your deals here.</p>
+      <p className="text-sm text-gray-500 mt-2">Active deals: {activeDeals}</p>
+    </div>
+  );
+
+  const renderTasks = () => (
+    <div className="text-center py-12">
+      <List className="w-16 h-16 mx-auto text-gray-300 mb-4" />
+      <h2 className="text-xl font-semibold text-gray-900 mb-2">Task Management</h2>
+      <p className="text-gray-600">Organize and track your tasks here.</p>
+      <p className="text-sm text-gray-500 mt-2">Pending tasks: {pendingTasks.length}</p>
+    </div>
+  );
+
+  const renderProducts = () => (
+    <div className="text-center py-12">
+      <PieChart className="w-16 h-16 mx-auto text-gray-300 mb-4" />
+      <h2 className="text-xl font-semibold text-gray-900 mb-2">Product Management</h2>
+      <p className="text-gray-600">Manage your products and services here.</p>
+    </div>
+  );
+
+  const renderSettings = () => (
+    <div className="text-center py-12">
+      <Settings className="w-16 h-16 mx-auto text-gray-300 mb-4" />
+      <h2 className="text-xl font-semibold text-gray-900 mb-2">Settings</h2>
+      <p className="text-gray-600">Configure your CRM settings here.</p>
+    </div>
+  );
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Mobile Navigation */}
@@ -191,7 +243,12 @@ const MainApp: React.FC = () => {
       <main className="pb-20 lg:pb-8">
         <div className="max-w-4xl mx-auto px-4 py-6">
           {activeTab === 'dashboard' && renderDashboard()}
-          {/* Other tabs would render here */}
+          {activeTab === 'leads' && renderLeads()}
+          {activeTab === 'clients' && renderClients()}
+          {activeTab === 'deals' && renderDeals()}
+          {activeTab === 'tasks' && renderTasks()}
+          {activeTab === 'products' && renderProducts()}
+          {activeTab === 'settings' && renderSettings()}
         </div>
       </main>
     </div>
@@ -384,44 +441,15 @@ const MobileNavigation = ({ activeTab, onTabChange, isOpen, onClose, leadsCount,
               </button>
             </div>
           </div>
-          <div className="p-2 h-full overflow-y-auto">
-            <div className="mb-4">
-              <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide px-3 py-2">Main Menu</h3>
-              {[
-                { key: 'dashboard', icon: Home, label: 'Dashboard', count: null },
-                { key: 'leads', icon: Users, label: 'Leads', count: leadsCount },
-                { key: 'clients', icon: User, label: 'Clients', count: clientsCount },
-                { key: 'products', icon: PieChart, label: 'Products', count: 0 },
-                { key: 'deals', icon: Briefcase, label: 'Deals', count: dealsCount },
-                { key: 'tasks', icon: List, label: 'Tasks', count: pendingTasksCount },
-                { key: 'settings', icon: Settings, label: 'Settings', count: null },
-              ].map((item) => (
-                <button
-                  key={item.key}
-                  onClick={() => { onTabChange(item.key); onClose(); }}
-                  className={`w-full flex items-center justify-between p-3 rounded-lg mb-1 text-left transition-all ${
-                    activeTab === item.key
-                      ? 'bg-blue-100 text-blue-700 shadow-sm'
-                      : 'text-gray-700 hover:bg-gray-100'
-                  }`}
-                >
-                  <div className="flex items-center space-x-3">
-                    <item.icon className={`w-5 h-5 ${activeTab === item.key ? 'text-blue-600' : 'text-gray-600'}`} />
-                    <span className="font-medium">{item.label}</span>
-                  </div>
-                  {item.count !== null && item.count > 0 && (
-                    <span className={`text-xs px-2 py-1 rounded-full font-medium ${
-                      activeTab === item.key
-                        ? 'bg-blue-200 text-blue-800'
-                        : 'bg-gray-200 text-gray-600'
-                    }`}>
-                      {item.count}
-                    </span>
-                  )}
-                </button>
-              ))}
-            </div>
-          </div>
+          <MobileNavList
+            activeTab={activeTab}
+            onTabChange={onTabChange}
+            onClose={onClose}
+            leadsCount={leadsCount}
+            clientsCount={clientsCount}
+            dealsCount={dealsCount}
+            pendingTasksCount={pendingTasksCount}
+           />
         </div>
       </div>
     )}
@@ -453,5 +481,79 @@ const MobileNavigation = ({ activeTab, onTabChange, isOpen, onClose, leadsCount,
     </nav>
   </>
 );
+
+const MobileNavList = ({ activeTab, onTabChange, onClose, leadsCount, clientsCount, dealsCount, pendingTasksCount }) => {
+  const navItems = [
+    { key: 'dashboard', icon: Home, label: 'Dashboard', count: null, color: 'text-blue-600' },
+    { key: 'leads', icon: Users, label: 'Leads', count: leadsCount, color: 'text-green-600' },
+    { key: 'clients', icon: User, label: 'Clients', count: clientsCount, color: 'text-purple-600' },
+    { key: 'products', icon: PieChart, label: 'Products', count: 0, color: 'text-teal-600' },
+    { key: 'deals', icon: Briefcase, label: 'Deals', count: dealsCount, color: 'text-orange-600' },
+    { key: 'tasks', icon: List, label: 'Tasks', count: pendingTasksCount, color: 'text-red-600' },
+    { key: 'settings', icon: Settings, label: 'Settings', count: null, color: 'text-gray-600' },
+  ];
+
+  return (
+    <div className="p-2 h-full overflow-y-auto">
+      <div className="mb-4">
+        <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide px-3 py-2">Main Menu</h3>
+        {navItems.slice(0, 6).map((item) => (
+          <button
+            key={item.key}
+            onClick={() => { onTabChange(item.key); onClose(); }}
+            className={`w-full flex items-center justify-between p-3 rounded-lg mb-1 text-left transition-all ${
+              activeTab === item.key
+                ? 'bg-blue-100 text-blue-700 shadow-sm'
+                : 'text-gray-700 hover:bg-gray-100'
+            }`}
+          >
+            <div className="flex items-center space-x-3">
+              <item.icon className={`w-5 h-5 ${activeTab === item.key ? 'text-blue-600' : item.color}`} />
+              <span className="font-medium">{item.label}</span>
+            </div>
+            {item.count !== null && (
+              <span className={`text-xs px-2 py-1 rounded-full font-medium ${
+                activeTab === item.key
+                  ? 'bg-blue-200 text-blue-800'
+                  : 'bg-gray-200 text-gray-600'
+              }`}>
+                {item.count}
+              </span>
+            )}
+          </button>
+        ))}
+      </div>
+
+      <div className="border-t pt-4">
+        <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide px-3 py-2">Tools</h3>
+        {navItems.slice(6).map((item) => (
+          <button
+            key={item.key}
+            onClick={() => { onTabChange(item.key); onClose(); }}
+            className={`w-full flex items-center justify-between p-3 rounded-lg mb-1 text-left transition-all ${
+              activeTab === item.key
+                ? 'bg-blue-100 text-blue-700 shadow-sm'
+                : 'text-gray-700 hover:bg-gray-100'
+            }`}
+          >
+            <div className="flex items-center space-x-3">
+              <item.icon className={`w-5 h-5 ${activeTab === item.key ? 'text-blue-600' : item.color}`} />
+              <span className="font-medium">{item.label}</span>
+            </div>
+            {item.count !== null && (
+              <span className={`text-xs px-2 py-1 rounded-full font-medium ${
+                activeTab === item.key
+                  ? 'bg-blue-200 text-blue-800'
+                  : 'bg-gray-200 text-gray-600'
+              }`}>
+                {item.count}
+              </span>
+            )}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+};
 
 export default MainApp;
