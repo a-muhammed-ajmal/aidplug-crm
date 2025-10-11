@@ -1,9 +1,56 @@
 import React, { useState } from 'react';
-import { useAuth } from '../contexts/AuthContext';
+// import { useAuth } from '../contexts/AuthContext';
 import { useLeads } from '../hooks/useLeads';
 import { useClients } from '../hooks/useClients';
 import { useDeals } from '../hooks/useDeals';
 import { useTasks } from '../hooks/useTasks';
+import type { Task, Client } from '../types';
+
+// Component prop interfaces
+interface DashboardKPICardProps {
+  title: string;
+  value: number;
+  color: string;
+  icon: React.ComponentType<{ size?: number }>;
+}
+
+interface QuickActionButtonProps {
+  icon: React.ReactElement;
+  title: string;
+  subtitle: string;
+  colorClass: string;
+  onClick: () => void;
+}
+
+interface ThingsToDoProps {
+  tasks: Task[];
+  onSeeMore: () => void;
+}
+
+interface UpcomingEventsProps {
+  clients: Client[];
+}
+
+interface MobileNavigationProps {
+  activeTab: string;
+  onTabChange: (tab: string) => void;
+  isOpen: boolean;
+  onClose: () => void;
+  leadsCount: number;
+  clientsCount: number;
+  dealsCount: number;
+  pendingTasksCount: number;
+}
+
+interface MobileNavListProps {
+  activeTab: string;
+  onTabChange: (tab: string) => void;
+  onClose: () => void;
+  leadsCount: number;
+  clientsCount: number;
+  dealsCount: number;
+  pendingTasksCount: number;
+}
 import {
   Briefcase,
   Clock,
@@ -27,7 +74,7 @@ import {
 } from 'lucide-react';
 
 const MainApp: React.FC = () => {
-  const { signOut } = useAuth();
+  // const { signOut } = useAuth();
   const { leads } = useLeads();
   const { clients } = useClients();
   const { deals } = useDeals();
@@ -57,19 +104,19 @@ const MainApp: React.FC = () => {
           title="Deals Processing"
           value={kpis.activeDeals.value}
           color="bg-red-500"
-          icon={<Briefcase />}
+          icon={Briefcase}
         />
         <DashboardKPICard
           title="Days Remaining"
           value={kpis.daysRemaining.value}
           color="bg-orange-500"
-          icon={<Clock />}
+          icon={Clock}
         />
         <DashboardKPICard
           title="Done Successfully"
           value={kpis.doneSuccessfully.value}
           color="bg-green-500"
-          icon={<CheckCircle />}
+          icon={CheckCircle}
         />
       </div>
 
@@ -256,11 +303,11 @@ const MainApp: React.FC = () => {
 };
 
 // Component definitions
-const DashboardKPICard = ({ title, value, color, icon }) => (
+const DashboardKPICard: React.FC<DashboardKPICardProps> = ({ title, value, color, icon }) => (
   <div className="rounded-lg shadow-sm overflow-hidden bg-white flex flex-col">
     <div className={`${color} text-white p-3 relative h-20 flex items-center justify-center`}>
       <div className="absolute -right-1 -bottom-1 opacity-20 text-white">
-        {React.cloneElement(icon, { size: 56 })}
+        {React.createElement(icon, { size: 56 })}
       </div>
       <p className="text-3xl font-bold">{value}</p>
     </div>
@@ -270,7 +317,7 @@ const DashboardKPICard = ({ title, value, color, icon }) => (
   </div>
 );
 
-const QuickActionButton = ({ icon, title, subtitle, colorClass, onClick }) => (
+const QuickActionButton: React.FC<QuickActionButtonProps> = ({ icon, title, subtitle, colorClass, onClick }) => (
   <button
     onClick={onClick}
     className="flex items-center p-3 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 hover:shadow-sm transition-all duration-200 active:scale-95 text-left w-full"
@@ -285,10 +332,10 @@ const QuickActionButton = ({ icon, title, subtitle, colorClass, onClick }) => (
   </button>
 );
 
-const ThingsToDo = ({ tasks, onSeeMore }) => {
+const ThingsToDo: React.FC<ThingsToDoProps> = ({ tasks, onSeeMore }) => {
   const displayedTasks = tasks.slice(0, 5);
 
-  const getTypeIcon = (type) => {
+  const getTypeIcon = (type: string) => {
     switch (type) {
       case 'call': return <Users className="w-4 h-4" />;
       case 'meeting': return <User className="w-4 h-4" />;
@@ -344,8 +391,8 @@ const ThingsToDo = ({ tasks, onSeeMore }) => {
   );
 };
 
-const UpcomingEvents = ({ clients }) => {
-  const events = [];
+const UpcomingEvents: React.FC<UpcomingEventsProps> = ({ clients }) => {
+  const events: { id: string; type: string; date: Date; clientName: string; years: number | null }[] = [];
   const today = new Date();
   today.setHours(0,0,0,0);
   const sevenDaysFromNow = new Date();
@@ -381,7 +428,7 @@ const UpcomingEvents = ({ clients }) => {
     }
   });
 
-  const sortedEvents = events.sort((a, b) => a.date - b.date);
+  const sortedEvents = events.sort((a, b) => a.date.getTime() - b.date.getTime());
 
   return (
     <div className="bg-white rounded-xl p-4 border shadow-sm">
@@ -420,7 +467,7 @@ const UpcomingEvents = ({ clients }) => {
   );
 };
 
-const MobileNavigation = ({ activeTab, onTabChange, isOpen, onClose, leadsCount, clientsCount, dealsCount, pendingTasksCount }) => (
+const MobileNavigation: React.FC<MobileNavigationProps> = ({ activeTab, onTabChange, isOpen, onClose, leadsCount, clientsCount, dealsCount, pendingTasksCount }) => (
   <>
     {/* Mobile Sidebar Overlay */}
     {isOpen && (
@@ -482,7 +529,7 @@ const MobileNavigation = ({ activeTab, onTabChange, isOpen, onClose, leadsCount,
   </>
 );
 
-const MobileNavList = ({ activeTab, onTabChange, onClose, leadsCount, clientsCount, dealsCount, pendingTasksCount }) => {
+const MobileNavList: React.FC<MobileNavListProps> = ({ activeTab, onTabChange, onClose, leadsCount, clientsCount, dealsCount, pendingTasksCount }) => {
   const navItems = [
     { key: 'dashboard', icon: Home, label: 'Dashboard', count: null, color: 'text-blue-600' },
     { key: 'leads', icon: Users, label: 'Leads', count: leadsCount, color: 'text-green-600' },
