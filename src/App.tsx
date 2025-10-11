@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { LoginPage } from './components/auth/LoginPage';
 import { ResetPasswordPage } from './components/auth/ResetPasswordPage';
-import { MainApp } from './components/MainApp';
+import MainApp from './components/MainApp';
 
 const AppContent: React.FC = () => {
   const { user, loading } = useAuth();

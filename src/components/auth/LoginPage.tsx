@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Building, Mail, Lock, Eye, EyeOff, AlertCircle, CheckCircle, X } from 'lucide-react';
+import { Building, Eye, EyeOff, CheckCircle, X } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 
 type AuthView = 'welcome' | 'signin' | 'signup' | 'forgot';
@@ -34,8 +34,8 @@ export const LoginPage: React.FC = () => {
 
     try {
       await signIn(email, password);
-    } catch (err: any) {
-      setError(err.message || 'Invalid email or password');
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Invalid email or password');
     } finally {
       setLoading(false);
     }
@@ -68,8 +68,8 @@ export const LoginPage: React.FC = () => {
       await signUp(email, password, fullName);
       setSuccess('Account created! Please check your email to verify.');
       setTimeout(() => setView('signin'), 2000);
-    } catch (err: any) {
-      setError(err.message || 'Failed to create account');
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Failed to create account');
     } finally {
       setLoading(false);
     }
@@ -100,8 +100,8 @@ export const LoginPage: React.FC = () => {
         setView('signin');
         setEmail('');
       }, 3000);
-    } catch (err: any) {
-      setError(err.message || 'Failed to send reset email');
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Failed to send reset email');
     } finally {
       setLoading(false);
     }
